@@ -1,7 +1,7 @@
 """
  "  Written By: Gregory Owen
  "  Date: 04-12-2012 
- "  Last Modified: Fri Dec 14 00:35:52 2012
+ "  Last Modified: Tue Dec 18 15:52:42 2012
  "  
  "  Execution: python markov.py fileName outputChars linkLength
  "  
@@ -56,9 +56,12 @@ def processFile(fileName, linkLength):
         return [None, None, None]
 
     firstLink = text[0:linkLength]
+
+    # Ensure smooth transitions from the last link
+    text += firstLink
     link = firstLink
 
-    for i in range(1, length - linkLength):
+    for i in range(1, length + 1):
         prevLink = link
         link = text[i:i+linkLength]
 
@@ -67,13 +70,6 @@ def processFile(fileName, linkLength):
 
         chainDict[prevLink][link] += 1
         chainNumDict[prevLink] += 1
-
-    # Add a transition from the last link to the first so that chain doesn't break
-    if link not in chainDict:
-        chainDict[link] = defaultdict(int)
-
-    chainDict[link][firstLink] += 1
-    chainNumDict[link] += 1
 
     textFile.close()
     return [chainDict, chainNumDict, firstLink]
